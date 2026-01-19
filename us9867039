@@ -36,3 +36,35 @@ graph TD
    * 짧은 생존 시간(Short Lifetime): 단속을 피하거나 이동하며 작동하기 때문에 특정 위치에서 감지되는 시간이 짧습니다.
  * 판단 공식: (수신 전력 > 임계치) 이고 동시에 (신호 유지 시간 < 최소 유지 시간) 일 경우 가짜 기지국으로 확정합니다.
 요약(Summary) 파트까지 파악이 완료되었습니다. 이제 다음 순서인 **[Background of the Invention(발명의 배경)]**으로 이동하여 왜 이런 방식이 고안되었는지 확인해 볼까요? 아니면 바로 **[Claims(청구항)]**의 상세 조건을 보시겠습니까?
+
+
+
+graph TD
+    %% Start
+    Start([탐지 프로세스 시작]) --> Device["1st Device<br/>(UE 또는 BS)"]
+    
+    Device --> Detect["2nd Device의<br/>검출 신호 감지"]
+
+    %% 두 가지 실시예 분기
+    Detect --> Emb1["<b>[방법 1]</b><br/>매개변수 일관성 비교"]
+    Detect --> Emb2["<b>[방법 2]</b><br/>전력 및 지속시간 분석"]
+
+    %% Embodiment 1 상세
+    subgraph "일관성 체크 (Inconsistency)"
+        Emb1 --> Params["여러 매개변수<br/>(Parameters) 식별"]
+        Params --> Compare1["주변 기지국<br/>클러스터와 비교"]
+        Compare1 --> Incon{"불일치 정도가<br/>임계치를<br/>초과하는가?"}
+        Incon -- "Yes" --> Fake1["가짜 기지국<br/>(Fake BS) 판정"]
+    end
+
+    %% Embodiment 2 상세
+    subgraph "물리 지표 분석 (Power & Lifetime)"
+        Emb2 --> Ref["기준점 결정:<br/>전력 임계치 &<br/>최소 지속시간"]
+        Ref --> Cond{"[조건 확인]<br/>1. 전력 > 임계치<br/>AND<br/>2. 지속시간 < 최소값"}
+        Cond -- "조건 충족" --> Fake2["가짜 기지국<br/>(Fake BS) 판정"]
+    end
+
+    %% Result
+    Fake1 --> Action([대응 조치 수행])
+    Fake2 --> Action
+
