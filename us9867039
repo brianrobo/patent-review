@@ -1,25 +1,23 @@
-sequenceDiagram
-    participant UE_BS as 제1 무선 장치 (UE 또는 정상 BS)
-    participant FakeBS as 제2 무선 장치 (가짜 기지국 의심)
-    participant Controller as 중앙 컨트롤러 (Central Controller)
-    
-    Note over FakeBS: 기지국(BS)으로 위장하여 광고
-    FakeBS->>UE_BS: 발견 신호(Discovery Signal) 전송
-    
-    Note over UE_BS: 1. 다수의 파라미터 식별 및 추출
-    
-    rect rgb(240, 240, 240)
-        Note right of UE_BS: 시나리오 A: 자체 판단
-        UE_BS->>UE_BS: 인접 BS 클러스터 파라미터 세트와 비교
-        alt 불일치가 임계값 초과
-            UE_BS->>UE_BS: 제2 무선 장치를 가짜 BS로 결정
-        end
+graph TD
+    subgraph "가짜 기지국(FBS)의 침투 과정"
+        A[가짜 기지국 활성화] --> B[강한 신호로 시스템 정보 방송]
+        B --> C{단말기(UE) 탐색}
+        C -->|신호 세기 우위| D[UE가 가짜 기지국을 최적 셀로 선택]
     end
 
-    rect rgb(230, 245, 255)
-        Note right of UE_BS: 시나리오 B: 중앙 컨트롤러 협력
-        UE_BS->>Controller: 식별된 파라미터 전송
-        Note over Controller: 이력 데이터 및 타 소스 데이터 집계
-        Controller->>Controller: 상관 관계 분석 및 가짜 여부 결정
-        Controller-->>UE_BS: 가짜 BS 판단 결과 공유 (선택 사항)
+    subgraph "보안 위협 (Attack Vectors)"
+        D --> E[중간자 공격 - MitM]
+        E --> F[사용자 식별자 가로채기 - IMSI Catching]
+        E --> G[통신 내용 도청 및 데이터 변조]
+        E --> G2[사용자 위치 추적]
     end
+
+    subgraph "기존 시스템의 취약점"
+        H[단방향 인증 체계의 틈새 활용] --> D
+        I[강제 강등 공격 - Ciphering 취소] --> G
+    end
+
+    style A fill:#f96,stroke:#333
+    style D fill:#f66,stroke:#333,stroke-width:2px
+    style F fill:#fff,stroke:#333
+    style G fill:#fff,stroke:#333
