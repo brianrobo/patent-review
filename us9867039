@@ -1,30 +1,45 @@
-제공해주신 단락은 특허의 상세한 설명(Detailed Description) 도입부에 흔히 등장하는 법적 고지이자 가이드라인입니다. 요약하자면, "여기 설명하는 예시들은 단지 예일 뿐이며, 실제 권리 범위는 청구항(Claims)에 의해 결정되고 가변성이 있다"는 내용입니다.
-이 추상적인 법적 개념을 이해하기 쉽게 특허 해석의 구조로 시각화해 드립니다.
-⚖️ US9867039B2: 실시예와 권리 범위의 관계
+US9867039B2 특허 상세 설명의 두 번째 단락은 가짜 기지국(Fake BS)의 정의와 그로 인한 위협, 그리고 기존 탐지 방식의 한계를 다루고 있습니다.
+이 내용을 바탕으로 가짜 기지국의 공격 메커니즘과 문제점을 시각화한 Mermaid 다이어그램입니다.
+⚠️ US9867039B2: 위협 모델 및 탐지 한계 (Threat Model)
 graph TD
-    %% Main Concepts
-    Concept["<b>핵심 개념 (Concepts)</b><br/>가짜 기지국 탐지 기술"]
+    %% Actors
+    Attacker["<b>공격자 (Adversary)</b>"]
+    FakeBS["<b>가짜 기지국 (Fake BS)</b><br/>(IMSI Catcher / Rogue BS)"]
+    UE["<b>단말 (UE)</b>"]
+    LegitBS["<b>정상 기지국 (Legit BS)</b>"]
 
-    %% Application and Examples
-    Concept --> Contexts["<b>다양한 맥락 (Specific Contexts)</b><br/>광범위한 환경에 적용 가능"]
-    Concept --> Embodiments["<b>실시예 (Embodiments)</b><br/>구체적인 구현 예시"]
+    %% Attack Process
+    Attacker -->|운용| FakeBS
+    FakeBS -->|사칭 (Impersonate)| LegitBS
+    FakeBS -.->|유인 (Lure)| UE
+    UE -->|연결 (Connect)| FakeBS
 
-    %% Cautions/Flexibility
-    subgraph "해석 유의사항 (Interpretation)"
-        Embodiments -.-> Illustrative["단순 예시일 뿐 (Illustrative)<br/>권리 범위를 제한하지 않음"]
-        Changes["<b>변경 및 수정 (Alterations)</b><br/>정신과 범위를 벗어나지 않는<br/>다양한 변형 허용"]
+    %% Impacts
+    subgraph Attacks ["<b>발생 가능한 공격 (Attacks)</b>"]
+        direction TB
+        A1["도청 (Eavesdropping)"]
+        A2["데이터 가로채기 (Data Interception)"]
+        A3["중간자 공격 (MITM)"]
     end
+    UE --- Attacks
 
-    %% Final Authority
-    Concept --> Spirit["<b>발명의 핵심 정신 (Spirit)</b>"]
-    Spirit --> Claims{{"<b>최종 권리 범위 (Claims)</b><br/>첨부된 청구항에 의해 정의됨"}}
+    %% Limitations
+    subgraph Problem ["<b>기존 방식의 한계</b>"]
+        Limit["단말(UE) 단독으로는<br/>정상/가짜 구분 어려움"]
+    end
+    UE -.-> Limit
 
-    Illustrative --- Claims
-    Changes --- Claims
+    %% Solution Hint
+    Solution["<b>해결책 (Assistance)</b><br/>중앙 컨트롤러 또는<br/>주변 기지국 클러스터의 도움"]
+    Limit ==> Solution
 
-📝 문구의 핵심 포인트 해석
-이 단락이 말하고자 하는 세 가지 핵심 규칙은 다음과 같습니다.
- * 비제한성 (Non-limitation): "이런 방식으로 만든다"고 구체적으로 설명한 예시(Embodiment)들이 이 기술의 전부가 아닙니다. 이는 이해를 돕기 위한 예시일 뿐입니다.
- * 확장성 (Versatility): 이 기술은 특정한 상황뿐만 아니라 매우 다양한 환경과 맥락에서 구현될 수 있습니다.
- * 수정 가능성 (Flexibility): 기술의 본질(Spirit)을 유지하는 한, 구성 요소를 바꾸거나(Substitution) 형태를 변경(Alteration)하더라도 이 특허의 보호 범위에 속할 수 있음을 명시합니다.
-이 부분은 본문을 읽기 전 "우리가 보여주는 게 전부는 아니니 넓게 해석하라"는 선언문과 같습니다. 이제 드디어 실제 기술적 내용이 시작되는 **[Detailed Description]**의 구체적인 시스템 구조나 동작 원리 파트로 넘어가 볼까요? 원하시는 다음 부분을 말씀해 주세요!
+📝 두 번째 단락 핵심 내용 요약
+ * 가짜 기지국의 정의:
+   * IMSI Catcher 또는 Rogue BS라고도 불립니다.
+   * 정상적인 기지국을 **사칭(Impersonate)**하여 단말(UE)이 자신에게 연결되도록 **유인(Lure)**합니다.
+ * 보안 위협:
+   * 단말이 가짜 기지국에 접속하게 되면, 공격자는 도청(Eavesdropping), 데이터 가로채기(Data Interception), 중간자 공격(MITM) 등을 수행할 수 있습니다.
+ * 기술적 난제 (Problem Statement):
+   * 전형적인 방식으로는 단말 스스로가 정상 기지국과 가짜 기지국을 구별해내기가 매우 어렵습니다.
+   * 따라서 본 특허는 **중앙 컨트롤러(Central Controller)**나 **주변 기지국 클러스터(Cluster of neighboring BSs)**의 도움을 받는 방식을 제안합니다.
+이제 배경 설명이 끝나고 본격적인 **시스템 구성도나 동작 절차(예: Figure 1에 대한 설명)**가 나올 차례입니다. 다음 단락의 원문 확인과 시각화를 계속 진행할까요? 혹은 특정하게 궁금한 부분이 있으신가요?
