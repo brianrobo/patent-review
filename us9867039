@@ -1,70 +1,24 @@
-제공해주신 Summary of the Invention은 가짜 기지국을 판별하는 두 가지 구체적인 실시예(Embodiment)를 다루고 있습니다.
-첫 번째는 **매개변수 불일치(Inconsistency)**를 기준으로 하는 일반적인 방법이고, 두 번째는 **신호 강도(Power)와 지속 시간(Lifetime)**이라는 구체적인 물리 지표를 결합한 방법입니다. 이를 구분하여 다이어그램으로 표현해 드립니다.
-📊 US9867039B2 Summary: Detection Methods
-graph TD
-    Start([Detection Triggered]) --> Device["1st Wireless Device (UE or BS)"]
-    Device --> Detect["Detect Discovery Signal from<br/>2nd Wireless Device (Candidate)"]
+제공해주신 소스(US9867039B2)의 **'DETAILED DESCRIPTION OF ILLUSTRATIVE EMBODIMENTS(예시적 실시예의 상세한 설명)'** 섹션에서 주요 단락들을 원문 그대로 추출해 드립니다.
 
-    %% Split into two embodiments
-    Detect --> Emb1["<b>Embodiment 1: General Comparison</b>"]
-    Detect --> Emb2["<b>Embodiment 2: Physical Metrics Logic</b>"]
+**DETAILED DESCRIPTION OF ILLUSTRATIVE EMBODIMENTS**
 
-    subgraph "Method A: Parameter Consistency"
-        Emb1 --> Params[Identify Multiple Parameters]
-        Params --> Compare1[Compare with Neighbor Cluster Parameters]
-        Compare1 --> Incon{Inconsistency ><br/>Threshold?}
-        Incon -- "Yes" --> Fake1[Determined as Fake BS]
-    end
+**첫 번째 단락: 개요 및 유의사항**
+"The making and using of embodiments of this disclosure are discussed in detail below. It should be appreciated, however, that the concepts disclosed herein can be embodied in a wide variety of specific contexts, and that the specific embodiments discussed herein are merely illustrative and do not serve to limit the scope of the claims. Further, it should be understood that various changes, substitutions and alterations can be made herein without departing from the spirit and scope of this disclosure as defined by the appended claims." [1]
 
-    subgraph "Method B: Power-Duration Logic"
-        Emb2 --> Ref[Determine Cluster's Ref:<br/>Power Threshold & Min Lifetime]
-        Ref --> Cond{Check Conditions}
-        Cond -- "1. Power > Threshold<br/>AND<br/>2. Lifetime < Min Duration" --> Fake2[Determined as Fake BS]
-    end
+**두 번째 단락: GSM 보안 취약점과 가짜 기지국(BS)의 악용**
+"The Global System for Mobile Communications (GSM) specification requires a handset to authenticate to the network, but does not require the mobile device to authenticate the network. This well-known security hole is exploited by the fake base station (BS), which masquerades as a base station. It may allow the fake BS to force the mobile phone connected to it to use no call encryption (e.g., A5/0 mode) or to use easily breakable encryption (e.g., A5/1 or A5/2 mode), making the call data easy to intercept and convert to audio. The fake BS may also send a large volume of spoofing short message service (SMS) messages to trick the end user into believing the messages came from an authenticated party." [1, 2]
 
-    Fake1 --> Action([Responsive Action])
-    Fake2 --> Action
+**세 번째 단락: 기존 탐지 방식의 한계 및 새로운 메커니즘의 필요성**
+"There are current proposals and methods to locate fake base stations, but quite often there are many issues such as lack of capability to accurately detect and locate the fake base station in a timely fashion. In addition, some of the current approaches are difficult to implement. For example, a fake base station detection device may determine that a wireless device is a fake base station when only a discovery signal from the wireless device of a very short duration is detected. In fact, the discovery signal may be sent from a base station when the fake base station detection device travels with a relatively high speed and are handed over from one base station to another base station pretty often. Hence, new mechanisms for fake base station detection are desired." [2, 3]
 
-💡 핵심 내용 분석
-1. Embodiment 1 (일반적 매개변수 비교)
- * 가짜 기지국이 보내는 신호에서 여러 파라미터를 추출합니다.
- * 이 데이터들을 이미 알고 있는 **주변 기지국 클러스터(Cluster of neighboring BSs)**의 설정값들과 대조합니다.
- * 그 차이(Inconsistency)가 허용 범위(Threshold)를 넘어서면 가짜로 간주합니다.
-2. Embodiment 2 (전력 및 생존 시간 논리) 🌟 중요 포인트
- * 이 방식은 가짜 기지국의 전형적인 행동 패턴을 공략합니다.
-   * 강한 전력(High Power): 단말의 연결을 뺏어오기 위해 신호를 강하게 쏩니다.
-   * 짧은 생존 시간(Short Lifetime): 단속을 피하거나 이동하며 작동하기 때문에 특정 위치에서 감지되는 시간이 짧습니다.
- * 판단 공식: (수신 전력 > 임계치) 이고 동시에 (신호 유지 시간 < 최소 유지 시간) 일 경우 가짜 기지국으로 확정합니다.
-요약(Summary) 파트까지 파악이 완료되었습니다. 이제 다음 순서인 **[Background of the Invention(발명의 배경)]**으로 이동하여 왜 이런 방식이 고안되었는지 확인해 볼까요? 아니면 바로 **[Claims(청구항)]**의 상세 조건을 보시겠습니까?
+**네 번째 단락: 본 발명에서 제안하는 가짜 기지국 탐지 시스템의 기본 원리**
+"Disclosed herein is an embodiment fake station detection system and method for a cellular system. A first wireless device may identify multiple parameters associated with a discovery signal transmitted by a second wireless device while the second wireless device advertises as a base station (BS). The first wireless device may compare the multiple parameters associated with the discovery signal with a set of parameters assigned to, or otherwise associated with, a cluster of neighboring BSs. The first wireless device may further determine that the second wireless device is a fake BS when an inconsistency between the parameters associated with the discovery signal transmitted by the second wireless device and the set of parameters assigned to, or otherwise associated with, the cluster of neighboring BSs exceeds a threshold. The parameters may be collected from a wide range of sources." [4]
 
+**다섯 번째 단락: 지능형 분석 및 머신러닝의 활용**
+"Intelligence analytics and machine learning technologies may be used to process a large volume of unstructured data in real time and correlate information from different sources. An embodiment system and method may maximize the usage of existing information and historical information and predict and detect a fake base station in a timely fashion. For instance, it may accurately determine the location and path of a moving fake BS, e.g., a vehicle carrying the fake BS, based on current collected data, historical data and trends of the fake BS." [5]
 
+**여섯 번째 단락: 시스템의 목적 및 사용자 경험 개선**
+"The fake BS detection system and method may be used by an operator to detect and predict a fake BS, and to increase the end user quality of experience (QoE) or to reduce customer churn. This may also help to pinpoint criminal activities based on the fake BS. These and other aspects are disclosed in greater detail below." [6]
 
-graph TD
-    %% Start
-    Start([탐지 프로세스 시작]) --> Device["1st Device<br/>(UE 또는 BS)"]
-    
-    Device --> Detect["2nd Device의<br/>검출 신호 감지"]
-
-    %% 두 가지 실시예 분기
-    Detect --> Emb1["<b>[방법 1]</b><br/>매개변수 일관성 비교"]
-    Detect --> Emb2["<b>[방법 2]</b><br/>전력 및 지속시간 분석"]
-
-    %% Embodiment 1 상세
-    subgraph "일관성 체크 (Inconsistency)"
-        Emb1 --> Params["여러 매개변수<br/>(Parameters) 식별"]
-        Params --> Compare1["주변 기지국<br/>클러스터와 비교"]
-        Compare1 --> Incon{"불일치 정도가<br/>임계치를<br/>초과하는가?"}
-        Incon -- "Yes" --> Fake1["가짜 기지국<br/>(Fake BS) 판정"]
-    end
-
-    %% Embodiment 2 상세
-    subgraph "물리 지표 분석 (Power & Lifetime)"
-        Emb2 --> Ref["기준점 결정:<br/>전력 임계치 &<br/>최소 지속시간"]
-        Ref --> Cond{"[조건 확인]<br/>1. 전력 > 임계치<br/>AND<br/>2. 지속시간 < 최소값"}
-        Cond -- "조건 충족" --> Fake2["가짜 기지국<br/>(Fake BS) 판정"]
-    end
-
-    %% Result
-    Fake1 --> Action([대응 조치 수행])
-    Fake2 --> Action
-
+**일곱 번째 단락: 도면 1(FIG. 1)에 대한 설명 및 기지국/단말 정의**
+"FIG. 1 illustrates a network 100 for communicating data. The network 100 comprises a base station 110 having a coverage area 112, a plurality of mobile devices 120 (120a, 120b), and a backhaul network 130. As shown, the base station 110 establishes uplink (dashed line) and/or downlink (dotted line) connections with the mobile devices 120, which serve to carry data from the mobile devices 120 to the base station 110 and vice-versa. Data carried over the uplink/downlink connections may include data communicated between the mobile devices 120, as well as data communicated to/from a remote-end (not shown) by way of the backhaul network 130. As used herein, the term “base station” refers to any component (or collection of components) configured to provide wireless access to a network... As used herein, the term “mobile device” refers to any component (or collection of components) capable of establishing a wireless connection with a base station... The terms “mobile station” and “user equipment” are used interchangeably throughout this disclosure." [7]
