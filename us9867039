@@ -1,45 +1,39 @@
-US9867039B2 특허 상세 설명의 두 번째 단락은 가짜 기지국(Fake BS)의 정의와 그로 인한 위협, 그리고 기존 탐지 방식의 한계를 다루고 있습니다.
-이 내용을 바탕으로 가짜 기지국의 공격 메커니즘과 문제점을 시각화한 Mermaid 다이어그램입니다.
-⚠️ US9867039B2: 위협 모델 및 탐지 한계 (Threat Model)
+제공해주신 두 번째 단락은 GSM(2G) 통신 규격의 근본적인 설계 결함과 이를 통한 구체적인 공격 시나리오를 다루고 있습니다.
+특히 **'단방향 인증(One-way Authentication)'**으로 인한 보안 구멍과 **'암호화 강제 하향(Downgrade Attack)'**이 핵심입니다. 이를 시각화한 다이어그램입니다.
+🛡️ US9867039B2: GSM 취약점 및 가짜 기지국 공격 메커니즘
 graph TD
-    %% Actors
-    Attacker["<b>공격자 (Adversary)</b>"]
-    FakeBS["<b>가짜 기지국 (Fake BS)</b><br/>(IMSI Catcher / Rogue BS)"]
-    UE["<b>단말 (UE)</b>"]
-    LegitBS["<b>정상 기지국 (Legit BS)</b>"]
+    %% Vulnerability Root
+    Root["<b>GSM 규격 취약점</b><br/>(One-way Authentication)"]
+    
+    Root --> Auth["<b>인증 불균형</b><br/>단말기 → 네트워크 (인증 O)<br/>네트워크 → 단말기 (인증 X)"]
+    
+    Auth --> Exploit["<b>가짜 기지국 (Fake BS)</b><br/>정상 기지국으로 위장"]
 
-    %% Attack Process
-    Attacker -->|운용| FakeBS
-    FakeBS -->|사칭 (Impersonate)| LegitBS
-    FakeBS -.->|유인 (Lure)| UE
-    UE -->|연결 (Connect)| FakeBS
+    %% Attack Path 1: Encryption
+    Exploit --> Attack1["<b>공격 1: 암호화 수준 강제 저하</b>"]
+    Attack1 -- "Mode A5/0" --> Enc1["암호화 없음 (None)"]
+    Attack1 -- "Mode A5/1 or A5/2" --> Enc2["취약한 암호화 (Weak)"]
+    
+    Enc1 --> Data["<b>데이터 탈취</b><br/>통화 가청 및 오디오 변환"]
+    Enc2 --> Data
 
-    %% Impacts
-    subgraph Attacks ["<b>발생 가능한 공격 (Attacks)</b>"]
-        direction TB
-        A1["도청 (Eavesdropping)"]
-        A2["데이터 가로채기 (Data Interception)"]
-        A3["중간자 공격 (MITM)"]
-    end
-    UE --- Attacks
+    %% Attack Path 2: SMS
+    Exploit --> Attack2["<b>공격 2: SMS 스푸핑 (Spoofing)</b>"]
+    Attack2 --> SMS["대량의 가짜 SMS 발송<br/>(정상 발신자로 기만)"]
 
-    %% Limitations
-    subgraph Problem ["<b>기존 방식의 한계</b>"]
-        Limit["단말(UE) 단독으로는<br/>정상/가짜 구분 어려움"]
-    end
-    UE -.-> Limit
+    %% Styling
+    style Root fill:#f96,stroke:#333
+    style Attack1 fill:#fbb,stroke:#333
+    style Attack2 fill:#fbb,stroke:#333
 
-    %% Solution Hint
-    Solution["<b>해결책 (Assistance)</b><br/>중앙 컨트롤러 또는<br/>주변 기지국 클러스터의 도움"]
-    Limit ==> Solution
-
-📝 두 번째 단락 핵심 내용 요약
- * 가짜 기지국의 정의:
-   * IMSI Catcher 또는 Rogue BS라고도 불립니다.
-   * 정상적인 기지국을 **사칭(Impersonate)**하여 단말(UE)이 자신에게 연결되도록 **유인(Lure)**합니다.
- * 보안 위협:
-   * 단말이 가짜 기지국에 접속하게 되면, 공격자는 도청(Eavesdropping), 데이터 가로채기(Data Interception), 중간자 공격(MITM) 등을 수행할 수 있습니다.
- * 기술적 난제 (Problem Statement):
-   * 전형적인 방식으로는 단말 스스로가 정상 기지국과 가짜 기지국을 구별해내기가 매우 어렵습니다.
-   * 따라서 본 특허는 **중앙 컨트롤러(Central Controller)**나 **주변 기지국 클러스터(Cluster of neighboring BSs)**의 도움을 받는 방식을 제안합니다.
-이제 배경 설명이 끝나고 본격적인 **시스템 구성도나 동작 절차(예: Figure 1에 대한 설명)**가 나올 차례입니다. 다음 단락의 원문 확인과 시각화를 계속 진행할까요? 혹은 특정하게 궁금한 부분이 있으신가요?
+📝 핵심 내용 분석
+ * 보안의 구멍 (The Security Hole):
+   * GSM 규격상 단말기(Handset)는 네트워크에 자신을 인증해야 하지만, 네트워크(기지국)가 단말기에게 자신을 인증할 의무는 없습니다.
+   * 이 때문에 단말기는 신호가 강한 기지국이 나타나면 의심 없이 연결을 시도하게 됩니다.
+ * 암호화 강제 하향 (Downgrade Attack):
+   * 가짜 기지국은 접속한 단말기에게 A5/0(암호화 안 함) 모드나, 이미 해킹된 A5/1, A5/2(취약한 암호화) 모드를 사용하도록 강제합니다.
+   * 결과적으로 공격자는 통화 데이터를 실시간으로 가로채서 소리로 변환(Audio conversion)할 수 있게 됩니다.
+ * 심리적 기만 (SMS Spoofing):
+   * 기술적 도청뿐만 아니라, 신뢰할 수 있는 기관이나 지인인 것처럼 속여 스팸/피싱 메시지를 대량으로 발송하여 사용자를 속입니다.
+단방향 인증의 허점을 이용해 가짜 기지국이 어떻게 단말기를 장악하는지 잘 보여주는 단락입니다.
+이제 이 문제를 해결하기 위해 이 특허가 제안하는 **[세 번째 단락: 해결책의 개요 또는 시스템 구조]**로 넘어가 볼까요? 원문을 주시면 바로 작업을 이어가겠습니다.
