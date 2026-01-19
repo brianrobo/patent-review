@@ -1,50 +1,21 @@
-아래는 요청하신 **세 번째 단락(기존 탐지 방식의 한계 및 새로운 메커니즘의 필요성)**을 논리적으로 구조화한 Mermaid flowchart 다이어그램입니다.
-“기존 방식 → 문제 발생 → 오탐 원인 → 결과 → 새로운 메커니즘 필요”의 흐름을 명확히 표현했습니다.
+아래는 **네 번째 단락(제안 시스템의 기본 원리)**을 “신호 수집 → 파라미터 추출 → 이웃 기지국 클러스터 기준과 비교 → 불일치 점수/정도 계산 → 임계치 초과 시 fake BS 판정” 흐름으로 정리한 Mermaid 다이어그램입니다.
 
 flowchart TD
-    A[Existing Fake Base Station Detection Methods] --> B[Detection Based on Short Discovery Signal]
-    B --> C{Is Detection Accurate?}
+    A[First Wireless Device (Detector)] --> B[Receive Discovery Signal<br/>from Second Wireless Device<br/>(Advertising as BS)]
+    B --> C[Identify Multiple Parameters<br/>Associated with Discovery Signal]
 
-    C -- No --> D[Short Signal Duration]
-    D --> E[High-Speed UE Movement]
-    E --> F[Frequent Handover Between Legitimate Base Stations]
+    C --> D[Collect / Aggregate Parameters<br/>from Wide Range of Sources]
+    D --> E[Construct / Retrieve Reference Parameter Set<br/>for Cluster of Neighboring BSs]
 
-    F --> G[False Positive Detection]
-    G --> H[Difficulty in Accurate and Timely Localization]
+    E --> F[Compare Signal Parameters<br/>vs Neighboring BS Cluster Parameters]
+    F --> G[Compute Inconsistency Level<br/>(Mismatch Metric / Score)]
 
-    H --> I[Limited Practical Usability]
-    I --> J[Need for New Detection Mechanisms]
+    G --> H{Inconsistency Exceeds Threshold?}
+    H -- Yes --> I[Determine Second Wireless Device<br/>is Fake BS]
+    H -- No --> J[Determine Consistent with Neighboring BS Cluster<br/>(Likely Legitimate)]
 
-    C -- Yes --> K[Accurate Detection]
+원하시면, 여기서 한 단계 더 나아가서
 
-다이어그램 해석 포인트
+“multiple parameters”를 예시(PLMN/MCC, Cell ID/TAC, timing/frequency, power level, security indicator 등)로 분해한 확장 버전, 또는
 
-핵심 문제 원인
-
-매우 짧은 discovery signal
-
-UE의 고속 이동
-
-빈번한 핸드오버로 인한 정상 기지국 신호 오인
-
-
-결과
-
-False Positive 발생
-
-정확한 위치 식별 실패
-
-실환경 적용 어려움
-
-
-결론
-
-기존 방식의 구조적 한계 → 새로운 탐지 메커니즘 필요성 도출
-
-
-
-다음 단계로,
-
-이 다이어그램을 “제안 메커니즘(Scoring / Location-based / Time-accumulated)” 구조와 직접 대비시키는 그림이나
-
-특허 명세서용 Figure 번호(Fig. 2: Problem Illustration) 형태로 정리해드릴 수도 있습니다.
+특허 도면 스타일(Fig. X: Fake BS Detection Principle)로 입력/출력 블록을 더 명확히 만든 버전으로도 만들어드릴 수 있습니다.
