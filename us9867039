@@ -19,3 +19,18 @@ flowchart TD
 “multiple parameters”를 예시(PLMN/MCC, Cell ID/TAC, timing/frequency, power level, security indicator 등)로 분해한 확장 버전, 또는
 
 특허 도면 스타일(Fig. X: Fake BS Detection Principle)로 입력/출력 블록을 더 명확히 만든 버전으로도 만들어드릴 수 있습니다.
+
+
+flowchart TD
+    A[First wireless device] --> B[Receive discovery signal from second wireless device]
+    B --> C[Identify multiple signal parameters]
+
+    C --> D[Collect parameters from multiple sources]
+    D --> E[Load reference parameters of neighboring BS cluster]
+
+    E --> F[Compare signal parameters with cluster parameters]
+    F --> G[Calculate inconsistency level]
+
+    G --> H{Inconsistency exceeds threshold}
+    H -- Yes --> I[Determine fake base station]
+    H -- No --> J[Determine legitimate base station]
