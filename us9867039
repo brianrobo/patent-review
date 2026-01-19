@@ -1,35 +1,25 @@
+sequenceDiagram
+    participant UE_BS as 제1 무선 장치 (UE 또는 정상 BS)
+    participant FakeBS as 제2 무선 장치 (가짜 기지국 의심)
+    participant Controller as 중앙 컨트롤러 (Central Controller)
+    
+    Note over FakeBS: 기지국(BS)으로 위장하여 광고
+    FakeBS->>UE_BS: 발견 신호(Discovery Signal) 전송
+    
+    Note over UE_BS: 1. 다수의 파라미터 식별 및 추출
+    
+    rect rgb(240, 240, 240)
+        Note right of UE_BS: 시나리오 A: 자체 판단
+        UE_BS->>UE_BS: 인접 BS 클러스터 파라미터 세트와 비교
+        alt 불일치가 임계값 초과
+            UE_BS->>UE_BS: 제2 무선 장치를 가짜 BS로 결정
+        end
+    end
 
-요청하신 특허 **US9867039 (System and method for faked base station detection)**의 초록(Abstract) 내용을 가독성 있게 Markdown 형식으로 정리해 드립니다.
-📄 특허 검토: US9867039 (초록)
-1. 요약 (Abstract)
-본 특허는 무선 통신망에서 **가짜 기지국(Fake Base Station, FBS)**을 효과적으로 탐지하여 단말기의 보안을 강화하는 기술을 다룹니다.
-| 구분 | 주요 내용 |
-|---|---|
-| 핵심 동작 | 기지국으로부터 수신한 방송 메시지(Broadcast Message) 내의 시스템 정보를 분석 |
-| 비교 대상 | 현재 수신된 정보 vs 이력 시스템 정보(Historical System Info) 또는 이웃 기지국 정보 |
-| 판단 로직 | 두 정보 간의 불일치나 이상 징후가 포착될 경우 해당 기지국을 가짜(Fake)로 식별 |
-| 주요 목적 | 불법적인 기지국 연결을 통한 데이터 탈취 및 프라이버시 침해 방지 |
-2. 주요 매커니즘 흐름
- * 데이터 수집: 단말기가 주변 기지국에서 송출하는 시스템 정보를 실시간으로 획득합니다.
- * 데이터 비교: 로컬 메모리에 저장된 신뢰할 수 있는 기지국 리스트(이력 데이터)와 대조합니다.
- * 경보 및 차단: 비정상적인 파라미터(예: 신호 세기 대비 일치하지 않는 셀 ID 등) 발견 시 가짜 기지국으로 확정합니다.
-다음 단계 제안:
-초록 다음 섹션인 기술 분야(Technical Field) 또는 **배경 기술(Background)**에 대한 요약을 진행할까요? 원하시는 단락을 말씀해 주시면 바로 정리해 드리겠습니다.
-
-
-
-
-특허 US9867039의 Abstract(초록) 원문과 한국어 번역을 대조하여 확인하기 좋게 정리해 드립니다.
-📄 US9867039: Abstract (초록)
-English Original (원문)
-> "A system and method for faked base station detection are provided. The method includes: obtaining, by a user equipment (UE), system information of a base station from a broadcast message; comparing the system information with historical system information or system information of neighboring base stations; and determining whether the base station is a faked base station according to a comparison result."
-> 
-한국어 번역 (Translation)
-> "가짜 기지국 탐지를 위한 시스템 및 방법이 제공된다. 해당 방법은 다음을 포함한다: 사용자 단말(UE)이 방송 메시지로부터 기지국의 시스템 정보를 획득하는 단계; 해당 시스템 정보를 이력 시스템 정보 또는 이웃 기지국들의 시스템 정보와 비교하는 단계; 그리고 비교 결과에 따라 해당 기지국이 가짜 기지국인지 여부를 판단하는 단계."
-> 
-핵심 구성 요소 (Core Components)
- * Obtaining (정보 획득): 단말기(UE)가 기지국이 뿌리는 방송 메시지를 읽어 시스템 정보를 가져옴.
- * Comparing (비교): 현재 정보와 과거 데이터(Historical) 또는 주변(Neighboring) 정보를 대조함.
- * Determining (판단): 대조 결과를 바탕으로 가짜(Fake) 여부를 최종 판정함.
-다음 단락인 Background of the Invention (발명의 배경) 또는 Summary of the Invention (발명의 요약) 세부 내용으로 넘어갈까요? 원하시는 섹션을 말씀해 주시면 동일한 형식으로 정리해 드리겠습니다.
-
+    rect rgb(230, 245, 255)
+        Note right of UE_BS: 시나리오 B: 중앙 컨트롤러 협력
+        UE_BS->>Controller: 식별된 파라미터 전송
+        Note over Controller: 이력 데이터 및 타 소스 데이터 집계
+        Controller->>Controller: 상관 관계 분석 및 가짜 여부 결정
+        Controller-->>UE_BS: 가짜 BS 판단 결과 공유 (선택 사항)
+    end
