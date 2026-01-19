@@ -1,29 +1,49 @@
-특허 배경 기술에서 언급된 "Sending out spoofing and phishing SMS" 공격은 가짜 기지국(FBS)이 단말기를 자신의 네트워크에 강제로 연결시킨 후 수행하는 가장 대표적인 2차 공격 단계입니다.
-마크다운 문서에 정리하시기 좋게 핵심 내용을 설명해 드립니다.
-🛡️ 가짜 기지국을 통한 SMS 공격 분석
-가짜 기지국은 단순한 신호 방해 장치가 아니라, 단말기와 이동통신사 사이에서 데이터를 가로채는 중간자(Man-in-the-Middle, MitM) 역할을 합니다. 이 상태에서 다음과 같은 공격을 수행합니다.
-1. SMS Spoofing (SMS 발신번호 조작)
- * 정의: 송신자의 전화번호를 신뢰할 수 있는 기관(은행, 정부, 지인 등)의 번호로 위조하여 메시지를 보내는 공격입니다.
- * 원리: 가짜 기지국은 네트워크 제어권을 쥐고 있으므로, 메시지 헤더의 발신번호 정보를 마음대로 수정하여 단말기에 전달할 수 있습니다.
- * 위험성: 사용자는 평소 이용하던 은행의 공식 번호로 문자가 오기 때문에 의심 없이 메시지를 신뢰하게 됩니다.
-2. SMS Phishing (스미싱, Smishing)
- * 정의: 조작된 SMS 내에 악성 링크(URL)를 포함시켜 사용자의 개인정보를 탈취하거나 악성 앱 설치를 유도하는 공격입니다.
- * 공격 시나리오:
-   * 가짜 기지국이 "계좌 이상 감지, 본인 인증 필요"라는 Spoofing 문자를 발송.
-   * 문자 내에 가짜 뱅킹 사이트 링크(Phishing)를 포함.
-   * 사용자가 링크 클릭 시 아이디, 패스워드, 보안카드 번호 등을 탈취.
-📊 공격 프로세스 (Mermaid Flowchart)
-텍스트 잘림 방지를 위해 여백을 충분히 두어 작성했습니다.
-graph LR
-    A["  가짜 기지국 (FBS)  "] -- "1. 번호 조작 (Spoofing)" --> B{{"  신뢰할 수 있는 기관 사칭  "}}
-    B -- "2. 미끼 메시지 발송" --> C["  사용자 단말기 (UE)  "]
-    C -- "3. 피싱 링크 클릭" --> D["  악성 사이트 접속 / 정보 유출  "]
+네, 요청하신 대로 Technical Field와 Summary of the Invention의 후반부(Technical Advantages 포함) 원문을 번역 없이 그대로 옮겨드리고, 이를 바탕으로 한 다이어그램을 정리해 드립니다.
+📄 US9867039: Technical Field & Summary (Original Text)
+Technical Field
+> The present invention relates generally to wireless communications, and more particularly to a system and method for faked base station detection.
+> 
+Summary of the Invention (Advantages & Mechanism)
+> Technical advantages are generally achieved, by embodiments of this disclosure which describe a system and method for faked base station detection.
+> In accordance with an embodiment, a method for faked base station (BS) detection is provided. The method includes: obtaining, by a first wireless device, a plurality of parameters associated with a discovery signal transmitted by a second wireless device advertising as a BS; comparing, by the first wireless device, the plurality of parameters with a set of parameters assigned to or associated with a cluster of neighboring BSs; and determining that the second wireless device is a faked BS when a discrepancy between the plurality of parameters and the set of parameters associated with the cluster of neighboring BSs exceeds a threshold.
+> In accordance with another embodiment, a first wireless device is provided. The first wireless device includes: a processor; and a computer readable storage medium storing programming for execution by the processor, the programming including instructions to: identify a plurality of parameters associated with a discovery signal transmitted by a second wireless device advertising as a base station (BS); and transmit the plurality of parameters to a central controller.
+> 
+📊 Mechanism & Advantages (Mermaid Diagram)
+원문의 **"비교 및 판단 로직"**과 "중앙 컨트롤러 전송" 이라는 두 가지 핵심 실시예를 통합한 다이어그램입니다.
+graph TD
+    %% 노드 정의
+    FBS["Second Wireless Device <br/> (Advertising as BS)"]
+    WD1["First Wireless Device <br/> (UE or BS)"]
+    CC["Central Controller"]
+    
+    %% 프로세스 흐름
+    FBS -- "Transmits Discovery Signal" --> WD1
+    
+    subgraph "Internal Processing (WD1)"
+        A["Identify Plurality of Parameters"]
+        B{"Compare with <br/> Cluster Parameters"}
+        C["DETERMINE FAKED BS"]
+    end
 
-    style A fill:#ffcccc,stroke:#ff0000
-    style D fill:#ff9999,stroke:#ff0000
+    WD1 --> A
+    A --> B
+    B -- "Discrepancy > Threshold" --> C
+    
+    %% 중앙 컨트롤러 전송 실시예
+    A -. "Transmit Parameters" .-> CC
+    CC -. "Aggregate, Correlate, Analyze" .-> CC
 
-💡 특허 US9867039와의 연관성
-이 특허가 중요한 이유는 바로 이 단계 때문입니다. 일단 SMS 공격이 시작되면 사용자는 속기 쉽기 때문에, **문자가 오기 전(단말기가 가짜 기지국에 캠핑하기 전)**에 시스템 정보 파라미터를 비교하여 "이 기지국은 가짜다"라고 미리 판별해 접속을 차단하는 것이 이 기술의 핵심 목표입니다.
+    %% 스타일 설정 (텍스트 잘림 방지 및 색상)
+    style FBS fill:#f8d7da,stroke:#721c24,color:#721c24
+    style WD1 fill:#d1ecf1,stroke:#0c5460,color:#0c5460
+    style C fill:#dc3545,stroke:#fff,color:#fff
+    style CC fill:#fff3cd,stroke:#856404
+
+💡 기술적 이점 (Technical Advantages) 검토 포인트
+원문에서 강조하는 이점은 결국 다음의 매커니즘을 통해 달성됩니다:
+ * Cluster-based Detection: 단일 기지국 정보가 아닌, 주변 기지국 '클러스터'의 파라미터 세트와 비교함으로써 탐지의 정확도를 높임.
+ * Threshold-based Decision: 단순한 차이가 아니라 '임계값(Threshold)'을 설정하여 오탐(False Positive)을 줄임.
+ * Collaborative Analysis: 단말(WD1)과 중앙 컨트롤러(CC) 간의 역할 분담을 통해 실시간 탐지와 정밀 분석을 동시에 수행.
 다음 단계 제안:
-이제 공격의 위험성까지 정리되었으니, 특허의 본론인 "어떻게 이 가짜 기지국을 기술적으로 걸러내는가(Detailed Description의 알고리즘)" 부분으로 넘어가 볼까요?
-원하시면 **"가짜 기지국 탐지 알고리즘 단계별 요약"**을 요청해 주세요!
+원문 내용이 잘 정리되셨나요? 이제 특허의 구체적인 구현 방법이 담긴 **"Detailed Description (상세한 설명)"**으로 넘어가서, 실제로 어떤 파라미터들이 Cluster로 묶이는지 살펴볼까요?
+원하시면 **"상세 설명 원문 그대로 보여줘"**라고 말씀해 주세요.
