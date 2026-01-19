@@ -1,24 +1,30 @@
-제공해주신 소스(US9867039B2)의 **'DETAILED DESCRIPTION OF ILLUSTRATIVE EMBODIMENTS(예시적 실시예의 상세한 설명)'** 섹션에서 주요 단락들을 원문 그대로 추출해 드립니다.
+제공해주신 단락은 특허의 상세한 설명(Detailed Description) 도입부에 흔히 등장하는 법적 고지이자 가이드라인입니다. 요약하자면, "여기 설명하는 예시들은 단지 예일 뿐이며, 실제 권리 범위는 청구항(Claims)에 의해 결정되고 가변성이 있다"는 내용입니다.
+이 추상적인 법적 개념을 이해하기 쉽게 특허 해석의 구조로 시각화해 드립니다.
+⚖️ US9867039B2: 실시예와 권리 범위의 관계
+graph TD
+    %% Main Concepts
+    Concept["<b>핵심 개념 (Concepts)</b><br/>가짜 기지국 탐지 기술"]
 
-**DETAILED DESCRIPTION OF ILLUSTRATIVE EMBODIMENTS**
+    %% Application and Examples
+    Concept --> Contexts["<b>다양한 맥락 (Specific Contexts)</b><br/>광범위한 환경에 적용 가능"]
+    Concept --> Embodiments["<b>실시예 (Embodiments)</b><br/>구체적인 구현 예시"]
 
-**첫 번째 단락: 개요 및 유의사항**
-"The making and using of embodiments of this disclosure are discussed in detail below. It should be appreciated, however, that the concepts disclosed herein can be embodied in a wide variety of specific contexts, and that the specific embodiments discussed herein are merely illustrative and do not serve to limit the scope of the claims. Further, it should be understood that various changes, substitutions and alterations can be made herein without departing from the spirit and scope of this disclosure as defined by the appended claims." [1]
+    %% Cautions/Flexibility
+    subgraph "해석 유의사항 (Interpretation)"
+        Embodiments -.-> Illustrative["단순 예시일 뿐 (Illustrative)<br/>권리 범위를 제한하지 않음"]
+        Changes["<b>변경 및 수정 (Alterations)</b><br/>정신과 범위를 벗어나지 않는<br/>다양한 변형 허용"]
+    end
 
-**두 번째 단락: GSM 보안 취약점과 가짜 기지국(BS)의 악용**
-"The Global System for Mobile Communications (GSM) specification requires a handset to authenticate to the network, but does not require the mobile device to authenticate the network. This well-known security hole is exploited by the fake base station (BS), which masquerades as a base station. It may allow the fake BS to force the mobile phone connected to it to use no call encryption (e.g., A5/0 mode) or to use easily breakable encryption (e.g., A5/1 or A5/2 mode), making the call data easy to intercept and convert to audio. The fake BS may also send a large volume of spoofing short message service (SMS) messages to trick the end user into believing the messages came from an authenticated party." [1, 2]
+    %% Final Authority
+    Concept --> Spirit["<b>발명의 핵심 정신 (Spirit)</b>"]
+    Spirit --> Claims{{"<b>최종 권리 범위 (Claims)</b><br/>첨부된 청구항에 의해 정의됨"}}
 
-**세 번째 단락: 기존 탐지 방식의 한계 및 새로운 메커니즘의 필요성**
-"There are current proposals and methods to locate fake base stations, but quite often there are many issues such as lack of capability to accurately detect and locate the fake base station in a timely fashion. In addition, some of the current approaches are difficult to implement. For example, a fake base station detection device may determine that a wireless device is a fake base station when only a discovery signal from the wireless device of a very short duration is detected. In fact, the discovery signal may be sent from a base station when the fake base station detection device travels with a relatively high speed and are handed over from one base station to another base station pretty often. Hence, new mechanisms for fake base station detection are desired." [2, 3]
+    Illustrative --- Claims
+    Changes --- Claims
 
-**네 번째 단락: 본 발명에서 제안하는 가짜 기지국 탐지 시스템의 기본 원리**
-"Disclosed herein is an embodiment fake station detection system and method for a cellular system. A first wireless device may identify multiple parameters associated with a discovery signal transmitted by a second wireless device while the second wireless device advertises as a base station (BS). The first wireless device may compare the multiple parameters associated with the discovery signal with a set of parameters assigned to, or otherwise associated with, a cluster of neighboring BSs. The first wireless device may further determine that the second wireless device is a fake BS when an inconsistency between the parameters associated with the discovery signal transmitted by the second wireless device and the set of parameters assigned to, or otherwise associated with, the cluster of neighboring BSs exceeds a threshold. The parameters may be collected from a wide range of sources." [4]
-
-**다섯 번째 단락: 지능형 분석 및 머신러닝의 활용**
-"Intelligence analytics and machine learning technologies may be used to process a large volume of unstructured data in real time and correlate information from different sources. An embodiment system and method may maximize the usage of existing information and historical information and predict and detect a fake base station in a timely fashion. For instance, it may accurately determine the location and path of a moving fake BS, e.g., a vehicle carrying the fake BS, based on current collected data, historical data and trends of the fake BS." [5]
-
-**여섯 번째 단락: 시스템의 목적 및 사용자 경험 개선**
-"The fake BS detection system and method may be used by an operator to detect and predict a fake BS, and to increase the end user quality of experience (QoE) or to reduce customer churn. This may also help to pinpoint criminal activities based on the fake BS. These and other aspects are disclosed in greater detail below." [6]
-
-**일곱 번째 단락: 도면 1(FIG. 1)에 대한 설명 및 기지국/단말 정의**
-"FIG. 1 illustrates a network 100 for communicating data. The network 100 comprises a base station 110 having a coverage area 112, a plurality of mobile devices 120 (120a, 120b), and a backhaul network 130. As shown, the base station 110 establishes uplink (dashed line) and/or downlink (dotted line) connections with the mobile devices 120, which serve to carry data from the mobile devices 120 to the base station 110 and vice-versa. Data carried over the uplink/downlink connections may include data communicated between the mobile devices 120, as well as data communicated to/from a remote-end (not shown) by way of the backhaul network 130. As used herein, the term “base station” refers to any component (or collection of components) configured to provide wireless access to a network... As used herein, the term “mobile device” refers to any component (or collection of components) capable of establishing a wireless connection with a base station... The terms “mobile station” and “user equipment” are used interchangeably throughout this disclosure." [7]
+📝 문구의 핵심 포인트 해석
+이 단락이 말하고자 하는 세 가지 핵심 규칙은 다음과 같습니다.
+ * 비제한성 (Non-limitation): "이런 방식으로 만든다"고 구체적으로 설명한 예시(Embodiment)들이 이 기술의 전부가 아닙니다. 이는 이해를 돕기 위한 예시일 뿐입니다.
+ * 확장성 (Versatility): 이 기술은 특정한 상황뿐만 아니라 매우 다양한 환경과 맥락에서 구현될 수 있습니다.
+ * 수정 가능성 (Flexibility): 기술의 본질(Spirit)을 유지하는 한, 구성 요소를 바꾸거나(Substitution) 형태를 변경(Alteration)하더라도 이 특허의 보호 범위에 속할 수 있음을 명시합니다.
+이 부분은 본문을 읽기 전 "우리가 보여주는 게 전부는 아니니 넓게 해석하라"는 선언문과 같습니다. 이제 드디어 실제 기술적 내용이 시작되는 **[Detailed Description]**의 구체적인 시스템 구조나 동작 원리 파트로 넘어가 볼까요? 원하시는 다음 부분을 말씀해 주세요!
