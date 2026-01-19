@@ -1,24 +1,39 @@
-아래는 **여섯 번째 단락(시스템 목적 및 사용자 경험 개선)**을 “운영자 사용 → 탐지/예측 → QoE 개선 및 churn 감소 → 범죄 활동 단서 제공” 흐름으로 정리한 Mermaid 다이어그램입니다. (괄호/특수문자 최소화, 파싱 안정)
+아래는 **일곱 번째 단락(FIG. 1 설명 및 기지국·단말 정의)**을 네트워크 구성과 데이터 흐름 중심으로 정리한 Mermaid 다이어그램입니다.
+괄호·인용부호·HTML 제거로 파싱 안정 형태를 유지했습니다.
 
 flowchart TD
-    A[Operator uses fake BS detection system] --> B[Detect fake base station]
-    A --> C[Predict fake base station behavior]
+    A[Network 100] --> B[Base station 110]
+    A --> C[Mobile devices 120a and 120b]
+    A --> D[Backhaul network 130]
 
-    B --> D[Mitigation and prevention actions]
-    C --> D
+    B --> E[Coverage area 112]
 
-    D --> E[Improve end user QoE]
-    D --> F[Reduce customer churn]
+    C -->|Uplink data| B
+    B -->|Downlink data| C
 
-    B --> G[Support investigation]
-    G --> H[Pinpoint criminal activities related to fake BS]
+    B -->|Backhaul data| D
+    D -->|Remote end data| B
 
-    E --> I[Operational benefits]
-    F --> I
-    H --> I
+    subgraph Definitions
+        F[Base station provides wireless access]
+        G[Mobile device establishes wireless connection]
+        H[Mobile station and user equipment are equivalent]
+    end
 
-원하시면, 이 다이어그램을 특허 도면 스타일로 더 명확히 하도록
+    B --> F
+    C --> G
+    G --> H
 
-“Mitigation actions”를 예시(temporary cell barring, deprioritization, warning to UE, geo fencing update 등)로 세분화하거나
+표현 의도 요약
 
-“Operator” 외에 “UE, Core network, Security analytics platform” 구성요소를 넣은 시스템 구성도 형태로 확장해드릴 수 있습니다.
+구성 요소: Network, Base station, Mobile devices, Backhaul
+
+연결 관계: Uplink 및 Downlink 데이터 흐름
+
+범위 개념: Coverage area
+
+용어 정의: Base station, Mobile device, Mobile station, User equipment의 동의 관계
+
+
+원하시면 이 도면을 FIG. 1 특허 도면 스타일로 더 단순화하거나,
+이후 단락에서 나오는 fake BS가 이 구조에 삽입되는 위치를 강조한 변형 버전도 만들어드릴 수 있습니다.
