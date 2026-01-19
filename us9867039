@@ -1,23 +1,18 @@
 graph TD
-    subgraph "가짜 기지국(FBS)의 침투 과정"
+    subgraph Threat_Process [가짜 기지국 침투 과정]
         A[가짜 기지국 활성화] --> B[강한 신호로 시스템 정보 방송]
-        B --> C{단말기(UE) 탐색}
-        C -->|신호 세기 우위| D[UE가 가짜 기지국을 최적 셀로 선택]
+        B --> C{단말기 탐색}
+        C --> D[UE가 가짜 기지국을 최적 셀로 선택]
     end
 
-    subgraph "보안 위협 (Attack Vectors)"
-        D --> E[중간자 공격 - MitM]
-        E --> F[사용자 식별자 가로채기 - IMSI Catching]
+    subgraph Attack_Vectors [보안 위협]
+        D --> E[중간자 공격 MitM]
+        E --> F[사용자 식별자 가로채기 IMSI Catching]
         E --> G[통신 내용 도청 및 데이터 변조]
         E --> G2[사용자 위치 추적]
     end
 
-    subgraph "기존 시스템의 취약점"
-        H[단방향 인증 체계의 틈새 활용] --> D
-        I[강제 강등 공격 - Ciphering 취소] --> G
+    subgraph Vulnerability [기존 시스템 취약점]
+        H[단방향 인증 체계 활용] --> D
+        I[강제 강등 공격 - 암호화 취소] --> G
     end
-
-    style A fill:#f96,stroke:#333
-    style D fill:#f66,stroke:#333,stroke-width:2px
-    style F fill:#fff,stroke:#333
-    style G fill:#fff,stroke:#333
