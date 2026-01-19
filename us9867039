@@ -1,49 +1,6 @@
-네, 요청하신 대로 Technical Field와 Summary of the Invention의 후반부(Technical Advantages 포함) 원문을 번역 없이 그대로 옮겨드리고, 이를 바탕으로 한 다이어그램을 정리해 드립니다.
-📄 US9867039: Technical Field & Summary (Original Text)
-Technical Field
-> The present invention relates generally to wireless communications, and more particularly to a system and method for faked base station detection.
-> 
-Summary of the Invention (Advantages & Mechanism)
-> Technical advantages are generally achieved, by embodiments of this disclosure which describe a system and method for faked base station detection.
-> In accordance with an embodiment, a method for faked base station (BS) detection is provided. The method includes: obtaining, by a first wireless device, a plurality of parameters associated with a discovery signal transmitted by a second wireless device advertising as a BS; comparing, by the first wireless device, the plurality of parameters with a set of parameters assigned to or associated with a cluster of neighboring BSs; and determining that the second wireless device is a faked BS when a discrepancy between the plurality of parameters and the set of parameters associated with the cluster of neighboring BSs exceeds a threshold.
-> In accordance with another embodiment, a first wireless device is provided. The first wireless device includes: a processor; and a computer readable storage medium storing programming for execution by the processor, the programming including instructions to: identify a plurality of parameters associated with a discovery signal transmitted by a second wireless device advertising as a base station (BS); and transmit the plurality of parameters to a central controller.
-> 
-📊 Mechanism & Advantages (Mermaid Diagram)
-원문의 **"비교 및 판단 로직"**과 "중앙 컨트롤러 전송" 이라는 두 가지 핵심 실시예를 통합한 다이어그램입니다.
-graph TD
-    %% 노드 정의
-    FBS["Second Wireless Device <br/> (Advertising as BS)"]
-    WD1["First Wireless Device <br/> (UE or BS)"]
-    CC["Central Controller"]
-    
-    %% 프로세스 흐름
-    FBS -- "Transmits Discovery Signal" --> WD1
-    
-    subgraph "Internal Processing (WD1)"
-        A["Identify Plurality of Parameters"]
-        B{"Compare with <br/> Cluster Parameters"}
-        C["DETERMINE FAKED BS"]
-    end
+제공해주신 소스에서 추출한 해당 특허(US9867039B2)의 **요약(ABSTRACT) 원문**은 다음과 같습니다.
 
-    WD1 --> A
-    A --> B
-    B -- "Discrepancy > Threshold" --> C
-    
-    %% 중앙 컨트롤러 전송 실시예
-    A -. "Transmit Parameters" .-> CC
-    CC -. "Aggregate, Correlate, Analyze" .-> CC
+**ABSTRACT**
+A system and method of detecting fake base stations. A first wireless device such as a user equipment (UE) or a base station (BS) may identify multiple parameters associated with a discovery signal transmitted by a second wireless device, the second wireless device advertising as a BS. The first wireless device may compare the multiple parameters with a set of parameters assigned to, or otherwise associated with, a cluster of neighboring BSs, and determine that the second wireless device is a fake BS when an inconsistency between the multiple parameters and the set of parameters associated with the cluster of neighboring BSs exceeds a threshold. The UE or the BS may also transmit the multiple parameters to a central controller, and the central controller may aggregate, correlate, and analyze the parameters, historical data, and other data from other sources associated with the second wireless device to determine whether the second wireless device is a fake BS. [1]
 
-    %% 스타일 설정 (텍스트 잘림 방지 및 색상)
-    style FBS fill:#f8d7da,stroke:#721c24,color:#721c24
-    style WD1 fill:#d1ecf1,stroke:#0c5460,color:#0c5460
-    style C fill:#dc3545,stroke:#fff,color:#fff
-    style CC fill:#fff3cd,stroke:#856404
 
-💡 기술적 이점 (Technical Advantages) 검토 포인트
-원문에서 강조하는 이점은 결국 다음의 매커니즘을 통해 달성됩니다:
- * Cluster-based Detection: 단일 기지국 정보가 아닌, 주변 기지국 '클러스터'의 파라미터 세트와 비교함으로써 탐지의 정확도를 높임.
- * Threshold-based Decision: 단순한 차이가 아니라 '임계값(Threshold)'을 설정하여 오탐(False Positive)을 줄임.
- * Collaborative Analysis: 단말(WD1)과 중앙 컨트롤러(CC) 간의 역할 분담을 통해 실시간 탐지와 정밀 분석을 동시에 수행.
-다음 단계 제안:
-원문 내용이 잘 정리되셨나요? 이제 특허의 구체적인 구현 방법이 담긴 **"Detailed Description (상세한 설명)"**으로 넘어가서, 실제로 어떤 파라미터들이 Cluster로 묶이는지 살펴볼까요?
-원하시면 **"상세 설명 원문 그대로 보여줘"**라고 말씀해 주세요.
