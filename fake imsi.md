@@ -1,68 +1,51 @@
-사용자가 제안하신 "Fake IMSI 응답을 통한 기지국 판별" 아이디어를 구체화하기 위해, 단말의 상태(GUTI 보유 여부)에 따른 시나리오를 3GPP 규격 기반으로 정리해 드립니다.
-핵심은 정상 망은 가짜 IMSI를 받으면 결국 가입자 인증에 실패하여 거절(Reject)을 보내야 한다는 점입니다.
-1. 단말이 GUTI를 보유한 상태 (Registered/Idle)
-이미 이전에 접속하여 GUTI를 할당받은 상태에서 망이 갑자기 Identity Request (IMSI)를 보내는 것은, 망이 단말을 식별하지 못하는 예외 상황(MME 데이터 유실 등)이거나 FBS의 공격 상황입니다.
-시나리오 및 규격 동작
- * 정상 망: MME가 재부팅되었거나 DB 오류로 GUTI를 식별할 수 없을 때 IMSI를 요청합니다. Fake IMSI를 받으면 HSS 조회 후 가입 정보가 없으므로 **Attach/Tracking Area Update Reject**를 보냅니다. (TS 24.301 Section 5.4.4.4)
- * FBS: 단말의 실제 IMSI를 탈취하기 위해 요청합니다. Fake IMSI를 주면 이를 실제 식별자로 오인하여 수집하거나, 인증 과정 없이 다음 단계를 강제합니다.
-<!-- end list -->
+사용자가 구상 중인 **"Fake IMSI 전송을 통한 가짜 기지국 탐지 로직"**의 최종 단계입니다. 정상적인 망(Real MME/HSS)이 3GPP 규격에 따라 어떻게 인증 실패를 처리하는지, 그 과정에서 어떤 스펙이 관여하는지 시퀀스 다이어그램으로 정리해 드립니다.
+Fake IMSI 전송 시 정상 망의 표준 동작 시퀀스
 sequenceDiagram
-    participant UE as UE (GUTI 보유)
-    participant MME as Real MME / FBS
-    
-    Note over UE, MME: UE sends TAU Request or Service Request
-    UE->>MME: NAS Message (with GUTI)
-    
-    MME->>UE: NAS Identity Request (Type: IMSI)
-    Note right of MME: TS 24.301: Identity procedure
-    
+    autonumber
+    participant UE as UE (Terminal)
+    participant MME as Serving MME
+    participant HSS as HSS (Home DB)
+
+    Note over UE, MME: [Phase 1: Identification]
+    MME->>UE: NAS Identity Request (Type: IMSI)<br/>(TS 24.301 Sec 5.4.4.2)
     UE->>MME: NAS Identity Response (Fake IMSI)
     
-    alt Real Network (MME)
-        MME->>MME: HSS Lookup (Fake IMSI)
-        MME->>UE: NAS TAU/Attach Reject (Cause #8 or #9)
-        Note over UE: 정상망은 가짜임을 확인 후 거절
-    else Fake Base Station (FBS)
-        Note right of MME: IMSI Catcher 동작
-        MME->>UE: RRC Connection Release
-        Note over MME: 수집된 Fake IMSI를 저장하고 종료
-    end
+    Note over MME, HSS: [Phase 2: Auth Vector Retrieval]
+    MME->>HSS: S6a: Authentication-Information-Request (Fake IMSI)<br/>(TS 29.272 Sec 5.2.2.1)
+    
+    Note over HSS: IMSI Lookup Failure<br/>(User Unknown)
+    
+    HSS-->>MME: S6a: Authentication-Information-Answer<br/>(Result: DIAMETER_ERROR_USER_UNKNOWN 5001)<br/>(TS 29.272 Sec 5.2.2.2.1)
+    
+    Note over MME: Cannot derive Security Context<br/>(TS 33.401 Sec 6.1.2)
 
-2. 단말에 GUTI가 없는 상태 (Initial Attach)
-공장 초기화 후 첫 접속이거나 전원을 새로 켠 상태입니다. 이때는 Attach Request에 IMSI를 포함하거나, Identity Request에 응답해야 합니다.
-시나리오 및 규격 동작
- * 정상 망: Initial Attach 시 가짜 IMSI를 받으면 인증 벡터를 생성할 수 없습니다(K_{ASME} 생성 불가). **Authentication Request**를 보낼 수 없거나, 보내더라도 단말에서 MAC Failure가 발생하여 최종적으로 **Attach Reject**가 발생합니다. (TS 33.401 Section 6.1)
- * FBS: 보안 절차를 생략하고 단말에게 특정 설정(예: 무암호화 모드 전환)을 강요할 수 있습니다.
-<!-- end list -->
-sequenceDiagram
-    participant UE as UE (GUTI 없음)
-    participant MME as Real MME / FBS
+    Note over MME, UE: [Phase 3: Rejection]
+    MME->>UE: NAS Attach Reject (Cause #2: IMSI unknown in HSS)<br/>(TS 24.301 Sec 5.5.1.2.5)
     
-    UE->>MME: NAS Attach Request (Identity: IMSI or None)
-    
-    opt Identity Check
-        MME->>UE: NAS Identity Request (Type: IMSI)
-        UE->>MME: NAS Identity Response (Fake IMSI)
-    end
-    
-    alt Real Network (MME)
-        MME->>MME: Auth Vector Generation Failure
-        MME->>UE: NAS Attach Reject (Cause #8: Identity cannot be derived)
-        Note over UE: TS 24.301 5.5.1.2.5 규격 준수
-    else Fake Base Station (FBS)
-        MME->>UE: NAS Authentication Request (Fake or No Auth)
-        Note over UE: 보안 절차를 비정상적으로 스킵 시도
-    end
+    Note over UE: Move to EMM-DEREGISTERED state<br/>(TS 24.301 Sec 5.5.1.2.6)
 
-3. 규격 기반 동작 요약 비교
-| 항목 | 정상 망 (3GPP TS 24.301/33.401) | 가짜 기지국 (FBS) |
-|---|---|---|
-| GUTI 보유 시 | GUTI 불일치 시에만 IMSI 요청 (드문 경우) | 무조건 IMSI 요청 (IMSI Catching) |
-| Fake IMSI 수신 시 | HSS 대조 후 Attach/TAU Reject 송신 | 식별자 수집 완료 후 Release 하거나 무시 |
-| 인증(Auth) 단계 | 가짜 IMSI로는 유효한 AUTN 생성 불가 | 인증을 건너뛰거나 가짜 AUTN 전송 |
-| 최종 상태 | EMM-DEREGISTERED (접속 실패) | 연결 유지 시도 혹은 조기 종료 |
-4. 특허 관점에서의 차별화 포인트 (Insight)
-사용자님의 아이디어에서 중요한 점은 **"단말이 의도적으로 규격을 위반(가짜 정보 전송)했을 때, 상대방(기지국)이 규격대로 거절하는지"**를 보는 것입니다.
- * 정상 망: "너 정보가 우리 장부에 없으니 나가!" (Attach Reject Cause #8) → 정상 동작
- * FBS: "오, IMSI 확인 완료. 일단 저장하고 끊자." 혹은 "그냥 통과시켜!" → 비정상 동작(탐지)
-다음 단계로, 이 "가짜 IMSI 응답" 후에 기지국으로부터 오는 메시지 중 어떤 필드(Cause Value 등)를 탐지 로그로 남길지 설계해 볼까요?
+단계별 관련 3GPP 규격 상세
+ * Identity Response (UE → MME)
+   * 규격: TS 24.301 Section 5.4.4.3
+   * 내용: 단말은 요청받은 식별자 타입에 따라 Identity Response를 전송해야 함. (Fake IMSI를 보내더라도 프로토콜상 오류는 아님)
+ * Authentication-Information-Request (MME → HSS)
+   * 규격: TS 29.272 Section 5.2.2.1
+   * 내용: MME는 단말의 IMSI를 포함하여 인증 데이터를 요청함. S6a 인터페이스의 필수 절차.
+ * HSS의 에러 회신 (HSS → MME)
+   * 규격: TS 29.272 Section 7.3.101 (Result-Code AVP)
+   * 내용: 존재하지 않는 IMSI인 경우 DIAMETER_ERROR_USER_UNKNOWN (5001)을 반환함.
+ * 보안 데이터 배포 실패
+   * 규격: TS 33.401 Section 6.1.2
+   * 내용: HSS로부터 인증 벡터를 배포받지 못하면, MME는 단말과 보안 연결(K_{ASME} 생성 등)을 맺을 수 없음.
+ * Attach Reject (MME → UE)
+   * 규격: TS 24.301 Section 5.5.1.2.5
+   * 내용: 인증 및 식별에 실패한 경우 Attach Reject를 보내야 하며, EMM Cause #2 (IMSI unknown in HSS)를 명시하여 단말에게 서비스 거절을 알림.
+💡 탐지 알고리즘 적용 가이드 (특허 핵심 논리)
+이 시퀀스를 바탕으로 단말 내부에서 다음과 같은 판단 로직을 구현할 수 있습니다.
+ * 정상 망 판단: Identity Response(Fake IMSI) 전송 후, 규격에 명시된 시간(T3410 타이머 등) 내에 Attach Reject (Cause #2)가 수신되는 경우.
+ * 가짜 기지국(FBS) 판단:
+   * Attach Reject 없이 즉시 RRC Connection Release가 오는 경우 (단순 수집형).
+   * Identity Response 직후에 Authentication Request (가짜 벡터)가 오는 경우 (HSS 조회를 생략한 공격형).
+   * 아무런 응답 없이 연결이 유지되거나 비정상적인 NAS 메시지가 오는 경우.
+이처럼 **"규격에 정의된 실패 절차를 기지국이 수행하는가"**를 관찰하는 것이 사용자님 특허의 핵심 차별화 포인트가 될 것입니다.
+이제 이 시퀀스를 바탕으로 특허 초안에 들어갈 "판단 단계별 조건표"를 만들어 볼까요?
